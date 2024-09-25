@@ -1,12 +1,16 @@
 package com.example.lab4
 
 import android.util.Log
+import android.widget.Button
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModel
 
 private const val TAG = "QuizViewModel"
 
+
 class QuizViewModel : ViewModel() {
     var currentIndex = 0
+
     private val questionBank = listOf(
         Question(R.string.question_australia,
             true),

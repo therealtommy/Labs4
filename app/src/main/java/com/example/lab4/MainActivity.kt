@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var falseButton: Button
     private lateinit var nextButton: Button
     private lateinit var questionTextView: TextView
-
+    var i = 1
 
     private val quizViewModel: QuizViewModel by
     lazy {
@@ -40,6 +40,8 @@ class MainActivity : AppCompatActivity() {
         val currentIndex =
             savedInstanceState?.getInt(KEY_INDEX, 0) ?: 0
         quizViewModel.currentIndex = currentIndex
+
+
 
         val provider: ViewModelProvider = ViewModelProvider(this)
         val quizViewModel =
@@ -59,13 +61,23 @@ class MainActivity : AppCompatActivity() {
 
         trueButton.setOnClickListener { view: View ->
             checkAnswer(true)
+            trueButton.setVisibility(View.INVISIBLE)
+            falseButton.setVisibility(View.INVISIBLE)
         }
         falseButton.setOnClickListener { view: View ->
             checkAnswer(false)
+            falseButton.setVisibility(View.INVISIBLE)
+            trueButton.setVisibility(View.INVISIBLE)
         }
         nextButton.setOnClickListener {
             quizViewModel.moveToNext()
             updateQuestion()
+            trueButton.setVisibility(View.VISIBLE)
+            falseButton.setVisibility(View.VISIBLE)
+            Log.d(TAG, i.toString())
+            i = i + 1
+            if (i == 6)
+                nextButton.setVisibility(View.INVISIBLE)
         }
         updateQuestion()
 
@@ -85,14 +97,11 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG,
             "onPause() called")
     }
-    override fun
-            onSaveInstanceState(savedInstanceState: Bundle)
+    override fun onSaveInstanceState(savedInstanceState: Bundle)
     {
         super.onSaveInstanceState(savedInstanceState)
-        Log.i(TAG,
-            "onSaveInstanceState")
-        savedInstanceState.putInt(KEY_INDEX,
-            quizViewModel.currentIndex)
+        Log.i(TAG, "onSaveInstanceState")
+        savedInstanceState.putInt(KEY_INDEX, quizViewModel.currentIndex)
     }
 
     override fun onStop() {
@@ -110,20 +119,19 @@ class MainActivity : AppCompatActivity() {
         val questionTextResId =
             quizViewModel.currentQuestionText
         questionTextView.setText(questionTextResId)
+
+
     }
-    private fun checkAnswer(userAnswer:
-                            Boolean) {
-        val correctAnswer =
-            quizViewModel.currentQuestionAnswer
-        val messageResId = if (userAnswer ==
-            correctAnswer) {
-            R.string.correct_toast
+    private fun checkAnswer(userAnswer: Boolean)
+    {
+        var score = 0
+        val correctAnswer = quizViewModel.currentQuestionAnswer
+       if (userAnswer == correctAnswer) {
+            score = score + 1
         } else {
-            R.string.incorrect_toast
+            score = score
         }
-        Toast.makeText(this, messageResId,
-            Toast.LENGTH_SHORT)
-            .show()
+
     }
 
 }
