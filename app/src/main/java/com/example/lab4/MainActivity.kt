@@ -1,6 +1,7 @@
 package com.example.lab4
 
 
+import android.health.connect.datatypes.units.Length
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nextButton: Button
     private lateinit var questionTextView: TextView
     var i = 1
-
+    var score = 0
     private val quizViewModel: QuizViewModel by
     lazy {
         ViewModelProvider(this).get(QuizViewModel::class.java)
@@ -124,13 +125,15 @@ class MainActivity : AppCompatActivity() {
     }
     private fun checkAnswer(userAnswer: Boolean)
     {
-        var score = 0
+
         val correctAnswer = quizViewModel.currentQuestionAnswer
        if (userAnswer == correctAnswer) {
             score = score + 1
         } else {
             score = score
         }
+        if (i == 6)
+            Toast.makeText(this,"Ваш счет: " + score.toString(), Toast.LENGTH_LONG).show()
 
     }
 
