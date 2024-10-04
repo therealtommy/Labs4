@@ -15,13 +15,16 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import android.content.Intent
 import android.app.Activity
+import android.annotation.SuppressLint
+import android.app.ActivityOptions
+import android.os.Build
 
 private const val TAG = "MainActivity"
 private const val KEY_INDEX = "index"
 private const val REQUEST_CODE_CHEAT=0
 
 class MainActivity : AppCompatActivity() {
-
+    @SuppressLint("RestrictedApi")
     private lateinit var trueButton: Button
     private lateinit var falseButton: Button
     private lateinit var nextButton: Button
@@ -80,7 +83,14 @@ class MainActivity : AppCompatActivity() {
         {
             val answerIsTrue=quizViewModel.currentQuestionAnswer
             val intent=CheatActivity.newIntent(this@MainActivity,answerIsTrue)
-            startActivityForResult(intent,REQUEST_CODE_CHEAT)
+            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
+            {
+                val options = ActivityOptions.makeClipRevealAnimation(cheatButton, 0, 0, cheatButton.width, cheatButton.height)
+                startActivityForResult(intent,REQUEST_CODE_CHEAT,options.toBundle())
+            }else
+            {
+                startActivityForResult(intent,REQUEST_CODE_CHEAT)
+            }
         }
 
     }
