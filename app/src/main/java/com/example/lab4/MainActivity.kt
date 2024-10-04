@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import android.content.Intent
 
 private const val TAG = "MainActivity"
 private const val KEY_INDEX = "index"
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var falseButton: Button
     private lateinit var nextButton: Button
     private lateinit var questionTextView: TextView
+    private lateinit var cheatButton: Button
     var i = 1
     var score = 0
     private val quizViewModel: QuizViewModel by
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         falseButton = findViewById(R.id.false_button)
         nextButton = findViewById(R.id.next_button)
         questionTextView = findViewById(R.id.question_text_view)
-
+        cheatButton=findViewById(R.id.cheat_button)
 
         trueButton.setOnClickListener { view: View ->
             checkAnswer(true)
@@ -81,6 +83,12 @@ class MainActivity : AppCompatActivity() {
                 nextButton.setVisibility(View.INVISIBLE)
         }
         updateQuestion()
+        cheatButton.setOnClickListener()
+        {
+            val answerIsTrue=quizViewModel.currentQuestionAnswer
+            val intent=CheatActivity.newIntent(this@MainActivity,answerIsTrue)
+            startActivity(intent)
+        }
 
     }
     override fun onStart() {
