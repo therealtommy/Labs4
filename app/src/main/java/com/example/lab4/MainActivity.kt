@@ -14,9 +14,11 @@ import androidx.core.view.WindowInsetsCompat
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import android.content.Intent
+import android.app.Activity
 
 private const val TAG = "MainActivity"
 private const val KEY_INDEX = "index"
+private const val REQUEST_CODE_CHEAT=0
 
 class MainActivity : AppCompatActivity() {
 
@@ -87,9 +89,21 @@ class MainActivity : AppCompatActivity() {
         {
             val answerIsTrue=quizViewModel.currentQuestionAnswer
             val intent=CheatActivity.newIntent(this@MainActivity,answerIsTrue)
-            startActivity(intent)
+            startActivityForResult(intent,REQUEST_CODE_CHEAT)
         }
 
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode != Activity.RESULT_OK)
+        {
+            return
+        }
+        if( requestCode== REQUEST_CODE_CHEAT)
+        {
+            quizViewModel.isCheater=data?.getBooleanExtra(EXTRA_ANSWER_SHOWN,false)?:false
+        }
     }
     override fun onStart() {
         super.onStart()
@@ -134,7 +148,13 @@ class MainActivity : AppCompatActivity() {
     private fun checkAnswer(userAnswer: Boolean)
     {
 
-        val correctAnswer = quizViewModel.currentQuestionAnswer
+        val correctAnswer:Boolean=quizViewModel.currentQuestionAnswer
+        val messageResId=when{
+            quizViewModel.isCheater-> R.string.judgment_toast
+            userAnswer==correctAnswer->R.string.correct_toast
+            else->R.string.incorrect_toast
+        }
+        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
        if (userAnswer == correctAnswer) {
             score = score + 1
         } else {
