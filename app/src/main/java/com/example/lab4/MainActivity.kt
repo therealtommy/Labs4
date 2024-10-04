@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nextButton: Button
     private lateinit var questionTextView: TextView
     private lateinit var cheatButton: Button
+    var curCheat=0
     var i = 1
     var score = 0
     private val quizViewModel: QuizViewModel by
@@ -66,23 +67,13 @@ class MainActivity : AppCompatActivity() {
 
         trueButton.setOnClickListener { view: View ->
             checkAnswer(true)
-            trueButton.setVisibility(View.INVISIBLE)
-            falseButton.setVisibility(View.INVISIBLE)
         }
         falseButton.setOnClickListener { view: View ->
             checkAnswer(false)
-            falseButton.setVisibility(View.INVISIBLE)
-            trueButton.setVisibility(View.INVISIBLE)
         }
         nextButton.setOnClickListener {
             quizViewModel.moveToNext()
             updateQuestion()
-            trueButton.setVisibility(View.VISIBLE)
-            falseButton.setVisibility(View.VISIBLE)
-            Log.d(TAG, i.toString())
-            i = i + 1
-            if (i == 6)
-                nextButton.setVisibility(View.INVISIBLE)
         }
         updateQuestion()
         cheatButton.setOnClickListener()
@@ -139,6 +130,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateQuestion() {
+        trueButton.visibility= View.VISIBLE
+        falseButton.visibility= View.VISIBLE
+        i++
+        if(i==6)
+            nextButton.visibility=View.INVISIBLE
+        if(curCheat==3)
+        {
+            cheatButton.visibility=View.INVISIBLE
+        }else
+        {
+            cheatButton.visibility=View.VISIBLE
+        }
         val questionTextResId =
             quizViewModel.currentQuestionText
         questionTextView.setText(questionTextResId)
@@ -147,10 +150,16 @@ class MainActivity : AppCompatActivity() {
     }
     private fun checkAnswer(userAnswer: Boolean)
     {
-
+        trueButton.visibility= View.INVISIBLE
+        falseButton.visibility= View.INVISIBLE
+        cheatButton.visibility=View.INVISIBLE
         val correctAnswer:Boolean=quizViewModel.currentQuestionAnswer
         val messageResId=when{
-            quizViewModel.isCheater-> R.string.judgment_toast
+            quizViewModel.isCheater-> {
+                curCheat++
+                quizViewModel.isCheater=false
+                R.string.judgment_toast
+            }
             userAnswer==correctAnswer->R.string.correct_toast
             else->R.string.incorrect_toast
         }
@@ -162,6 +171,10 @@ class MainActivity : AppCompatActivity() {
         }
         if (i == 6)
             Toast.makeText(this,"Ваш счет: " + score.toString(), Toast.LENGTH_LONG).show()
+        if(curCheat==3)
+        {
+            cheatButton.visibility=View.INVISIBLE
+        }
 
     }
 
